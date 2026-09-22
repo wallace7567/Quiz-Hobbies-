@@ -112,59 +112,211 @@ const perguntas = [
 
 
 let perguntaAtual = 0;
+
 let pontos = 0;
+
+let respondeu = false;
 
 
 function mostrarPergunta() {
 
+    respondeu = false;
+
+    const pergunta = perguntas[perguntaAtual];
+
     document.getElementById("pergunta").textContent =
-        perguntas[perguntaAtual].pergunta;
+        pergunta.pergunta;
 
     document.getElementById("opcao0").textContent =
-        perguntas[perguntaAtual].opcoes[0];
+        pergunta.opcoes[0];
 
     document.getElementById("opcao1").textContent =
-        perguntas[perguntaAtual].opcoes[1];
+        pergunta.opcoes[1];
 
     document.getElementById("opcao2").textContent =
-        perguntas[perguntaAtual].opcoes[2];
+        pergunta.opcoes[2];
 
     document.getElementById("opcao3").textContent =
-        perguntas[perguntaAtual].opcoes[3];
+        pergunta.opcoes[3];
+
+
+    // Volta todos os botões ao normal
+
+    document.getElementById("opcao0").style.backgroundColor = "";
+
+    document.getElementById("opcao1").style.backgroundColor = "";
+
+    document.getElementById("opcao2").style.backgroundColor = "";
+
+    document.getElementById("opcao3").style.backgroundColor = "";
+
+
+    document.getElementById("opcao0").style.color = "";
+
+    document.getElementById("opcao1").style.color = "";
+
+    document.getElementById("opcao2").style.color = "";
+
+    document.getElementById("opcao3").style.color = "";
+
+
+    // Ativa os botões novamente
+
+    document.getElementById("opcao0").disabled = false;
+
+    document.getElementById("opcao1").disabled = false;
+
+    document.getElementById("opcao2").disabled = false;
+
+    document.getElementById("opcao3").disabled = false;
+
+
+    document.getElementById("resultado").textContent = "";
 
 }
 
 
-function responder(opcao) {
+function responder(opcaoEscolhida) {
 
-    if (opcao === perguntas[perguntaAtual].resposta) {
+    // Impede clicar várias vezes
+
+    if (respondeu) {
+        return;
+    }
+
+    respondeu = true;
+
+
+    const pergunta = perguntas[perguntaAtual];
+
+
+    const botoes = [
+
+        document.getElementById("opcao0"),
+
+        document.getElementById("opcao1"),
+
+        document.getElementById("opcao2"),
+
+        document.getElementById("opcao3")
+
+    ];
+
+
+    // Desativa os botões
+
+    botoes.forEach(function(botao) {
+
+        botao.disabled = true;
+
+    });
+
+
+    // Se acertou
+
+    if (opcaoEscolhida === pergunta.resposta) {
 
         pontos++;
 
-    }
+        botoes[opcaoEscolhida].style.backgroundColor = "#19a84a";
 
-    perguntaAtual++;
+        botoes[opcaoEscolhida].style.color = "white";
 
-
-    if (perguntaAtual < perguntas.length) {
-
-        mostrarPergunta();
-
-    } else {
-
-        document.getElementById("quiz").innerHTML =
-
-            "<h2>🏆 Quiz terminado!</h2>" +
-
-            "<p>Você acertou " +
-            pontos +
-            " de 10 perguntas!</p>" +
-
-            "<button onclick='location.reload()'>" +
-            "Jogar novamente" +
-            "</button>";
+        document.getElementById("resultado").textContent =
+            "✅ CORRETO!";
 
     }
+
+
+    // Se errou
+
+    else {
+
+        // Mostra a resposta escolhida em vermelho
+
+        botoes[opcaoEscolhida].style.backgroundColor = "#d62828";
+
+        botoes[opcaoEscolhida].style.color = "white";
+
+
+        // Mostra a resposta correta em verde
+
+        botoes[pergunta.resposta].style.backgroundColor = "#19a84a";
+
+        botoes[pergunta.resposta].style.color = "white";
+
+
+        document.getElementById("resultado").textContent =
+            "❌ ERRADO! A resposta correta está em verde.";
+    }
+
+
+    // Espera 1,5 segundo e vai para a próxima
+
+    setTimeout(function() {
+
+        perguntaAtual++;
+
+
+        if (perguntaAtual < perguntas.length) {
+
+            mostrarPergunta();
+
+        }
+
+        else {
+
+            mostrarResultado();
+
+        }
+
+    }, 1500);
+
+}
+
+
+function mostrarResultado() {
+
+    document.getElementById("quiz").innerHTML =
+
+        "<h2>🏆 Quiz terminado!</h2>" +
+
+        "<p>Você acertou " +
+        pontos +
+        " de 10 perguntas!</p>" +
+
+        "<p>" +
+        mensagemFinal() +
+        "</p>" +
+
+        "<button onclick='location.reload()'>" +
+        "🔄 Jogar novamente" +
+        "</button>";
+
+}
+
+
+function mensagemFinal() {
+
+    if (pontos === 10) {
+
+        return "🌟 Perfeito! Você é um verdadeiro mestre Jedi!";
+
+    }
+
+    if (pontos >= 7) {
+
+        return "🚀 Muito bom! Você conhece muito bem Star Wars!";
+
+    }
+
+    if (pontos >= 5) {
+
+        return "⚔️ Bom trabalho! Você conhece bastante da galáxia!";
+
+    }
+
+    return "🌌 Continue treinando e tente novamente!";
 
 }
 
